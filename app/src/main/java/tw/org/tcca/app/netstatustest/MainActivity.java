@@ -10,10 +10,12 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
     private ConnectivityManager cmgr;
     private MyReceiver myReceiver;
+    private boolean isConnectNetwork;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,10 +53,17 @@ public class MainActivity extends AppCompatActivity {
         return  info.isConnected();
     }
 
+    public void get1(View view) {
+        // HTTP or HTTPS
+
+
+    }
+
     private class MyReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.v("brad", "onReceive");
+            isConnectNetwork = isConnectNetwork();
         }
     }
 
