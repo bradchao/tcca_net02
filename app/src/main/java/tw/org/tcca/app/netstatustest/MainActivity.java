@@ -12,6 +12,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 public class MainActivity extends AppCompatActivity {
     private ConnectivityManager cmgr;
     private MyReceiver myReceiver;
@@ -55,9 +61,34 @@ public class MainActivity extends AppCompatActivity {
 
     public void get1(View view) {
         // HTTP or HTTPS
-
-
+        new Thread(){
+            @Override
+            public void run() {
+                doGet1();
+            }
+        }.start();
     }
+
+    private void doGet1(){
+        try {
+            URL url = new URL("http://www.tcca.org.tw");
+            HttpURLConnection conn =  (HttpURLConnection) url.openConnection();
+            conn.connect();
+
+            InputStream in = conn.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            String line = null;
+            while ( (line = reader.readLine()) != null){
+                Log.v("brad", line);
+            }
+            reader.close();
+            Log.v("brad", "over");
+
+        }catch (Exception e){
+            Log.v("brad", e.toString());
+        }
+    }
+
 
     private class MyReceiver extends BroadcastReceiver {
         @Override
