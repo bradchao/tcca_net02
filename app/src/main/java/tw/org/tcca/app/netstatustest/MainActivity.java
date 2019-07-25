@@ -7,6 +7,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -14,6 +16,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.BufferedReader;
@@ -29,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView mesg;
     private StringBuffer sb = new StringBuffer();
     private UIHandler uiHandler;
+    private ImageView img;
+    private Bitmap bitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +42,10 @@ public class MainActivity extends AppCompatActivity {
 
         uiHandler = new UIHandler();
         mesg = findViewById(R.id.mesg);
+
+        img = findViewById(R.id.img);
+
+
 
         cmgr = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -104,10 +113,40 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void get2(View view) {
+        new Thread(){
+            @Override
+            public void run() {
+                doGet2();
+            }
+        }.start();
+    }
+
+
+    private void doGet2(){
+        try {
+            URL url = new URL("https://s.yimg.com/ny/api/res/1.2/l5UKxUk8nG8cecb6tiIQxw--~A/YXBwaWQ9aGlnaGxhbmRlcjtzbT0xO3c9ODAw/https://media-mbst-pub-ue1.s3.amazonaws.com/creatr-uploaded-images/2019-07/91bd6220-9e54-11e9-bf6e-b3df8120db62");
+            HttpURLConnection conn =  (HttpURLConnection) url.openConnection();
+            conn.connect();
+
+            bitmap = BitmapFactory.decodeStream(conn.getInputStream());
+            uiHandler.sendEmptyMessage(1);
+
+
+        }catch (Exception e){
+            Log.v("brad", e.toString());
+        }
+    }
+
     private class UIHandler extends Handler {
         @Override
         public void handleMessage(@NonNull Message msg) {
-            mesg.setText(sb);
+            if (msg.what == 0) {
+                mesg.setText(sb);
+            }else if (msg.what == 1) {
+                img.setImageBitmap(bitmap);
+            }
+
         }
     }
 
