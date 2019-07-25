@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
         cmgr = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 
         Log.v("brad", "network:" + isConnectNetwork());
+        Log.v("brad", "wifi:" + isWifi());
 
     }
 
@@ -27,6 +28,11 @@ public class MainActivity extends AppCompatActivity {
         boolean isConnected = info != null && info.isConnectedOrConnecting();
         return  isConnected;
 
+    }
+
+    private boolean isWifi(){
+        NetworkInfo info =cmgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        return  info.isConnected();
     }
 
 }
