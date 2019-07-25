@@ -1,5 +1,6 @@
 package tw.org.tcca.app.netstatustest;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.BroadcastReceiver;
@@ -9,8 +10,11 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -22,11 +26,17 @@ public class MainActivity extends AppCompatActivity {
     private ConnectivityManager cmgr;
     private MyReceiver myReceiver;
     private boolean isConnectNetwork;
+    private TextView mesg;
+    private StringBuffer sb = new StringBuffer();
+    private UIHandler uiHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        uiHandler = new UIHandler();
+        mesg = findViewById(R.id.mesg);
 
         cmgr = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -80,12 +90,24 @@ public class MainActivity extends AppCompatActivity {
             String line = null;
             while ( (line = reader.readLine()) != null){
                 Log.v("brad", line);
+                sb.append(line + "\n");
             }
             reader.close();
             Log.v("brad", "over");
 
+            uiHandler.sendEmptyMessage(0);
+
+            //mesg.setText(sb);
+
         }catch (Exception e){
             Log.v("brad", e.toString());
+        }
+    }
+
+    private class UIHandler extends Handler {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            mesg.setText(sb);
         }
     }
 
